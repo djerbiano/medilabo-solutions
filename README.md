@@ -51,3 +51,5 @@ cd patient-service
 ```
 
 Le service écoute sur le port **8081**.
+
+Au démarrage, les tables (`schema.sql`) et les 4 patients de test du sujet (`data.sql`) sont créés automatiquement. Les scripts peuvent être relancés sans risque : les tables existantes et les patients déjà présents sont conservés, sans doublon.
