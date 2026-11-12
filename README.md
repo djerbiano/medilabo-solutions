@@ -100,3 +100,43 @@ Toutes les erreurs sont renvoyées au format standard `ProblemDetail` (RFC 9457,
 | 400  | Données invalides (détail par champ dans `errors`), genre inconnu, id non numérique, JSON illisible   |
 | 404  | Patient introuvable, URL inexistante                                                                  |
 | 405  | Méthode HTTP non autorisée (par exemple `DELETE`)                                                     |
+
+## Lancer le gateway en local
+
+Le gateway est le point d'entrée unique de l'application (port **8080**) : il vérifie l'authentification puis transmet chaque requête au bon microservice.
+
+### Prérequis
+
+- Java 21
+- `patient-service` démarré (voir ci-dessus)
+
+### 1. Configurer les variables d'environnement
+
+Copier `gateway/.env.example` en `gateway/.env`, puis choisir l'identifiant et le mot de passe de l'utilisateur autorisé.
+
+| Variable              | Rôle                                   | Valeur par défaut       |
+|-----------------------|----------------------------------------|-------------------------|
+| `GATEWAY_USERNAME`    | Identifiant de l'utilisateur           | Aucune (obligatoire)    |
+| `GATEWAY_PASSWORD`    | Mot de passe de l'utilisateur          | Aucune (obligatoire)    |
+| `PATIENT_SERVICE_URL` | Adresse du `patient-service`           | `http://localhost:8081` |
+
+### 2. Démarrer
+
+```bash
+cd gateway
+./mvnw spring-boot:run
+```
+
+Depuis IntelliJ, régler le *Working directory* sur `$MODULE_WORKING_DIR$`, comme pour `patient-service`.
+
+### Routes et sécurité
+
+| Chemin             | Service cible     |
+|--------------------|-------------------|
+| `/api/patients/**` | `patient-service` |
+
+Toutes les requêtes doivent être authentifiées en HTTP Basic, sinon le gateway répond **401** :
+
+```bash
+curl -u medecin:votre_mot_de_passe http://localhost:8080/api/patients
+```
