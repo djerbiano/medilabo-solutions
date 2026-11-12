@@ -10,7 +10,7 @@ Application en microservices d'aide à la détection du risque de diabète de ty
 | `notes-service`      | Notes des médecins sur les patients          | MongoDB         | 8082 | À venir  |
 | `assessment-service` | Évaluation du risque de diabète              | Aucune          | 8083 | À venir  |
 | `gateway`            | Point d'entrée unique et sécurité            | Aucune          | 8080 | En cours |
-| `front`              | Interface utilisateur                        | Aucune          | -    | À venir  |
+| `front`              | Interface utilisateur                        | Aucune          | 8084 | En cours |
 
 Stack : Java 21, Spring Boot 4.1.2, Maven.
 
@@ -140,3 +140,31 @@ Toutes les requêtes doivent être authentifiées en HTTP Basic, sinon le gatewa
 ```bash
 curl -u medecin:votre_mot_de_passe http://localhost:8080/api/patients
 ```
+
+## Lancer le front en local
+
+Le front affiche les pages HTML (Thymeleaf) et appelle uniquement le gateway.
+
+### Prérequis
+
+- Java 21
+- `patient-service` et `gateway` démarrés (voir ci-dessus)
+
+### 1. Configurer les variables d'environnement
+
+Copier `front/.env.example` en `front/.env`, puis renseigner les mêmes identifiants que dans `gateway/.env`.
+
+| Variable           | Rôle                                | Valeur par défaut       |
+|--------------------|-------------------------------------|-------------------------|
+| `GATEWAY_URL`      | Adresse du gateway                  | `http://localhost:8080` |
+| `GATEWAY_USERNAME` | Identifiant envoyé au gateway       | Aucune (obligatoire)    |
+| `GATEWAY_PASSWORD` | Mot de passe envoyé au gateway      | Aucune (obligatoire)    |
+
+### 2. Démarrer
+
+```bash
+cd front
+./mvnw spring-boot:run
+```
+
+Le front est accessible sur http://localhost:8084. Depuis IntelliJ, régler le *Working directory* sur `$MODULE_WORKING_DIR$`.
