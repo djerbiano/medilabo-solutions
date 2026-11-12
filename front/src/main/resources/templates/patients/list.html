@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Patients - MédiLabo</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+<body>
+<h1>Liste des patients</h1>
+
+<p th:if="${patients.isEmpty()}">Aucun patient enregistré.</p>
+
+<table th:unless="${patients.isEmpty()}">
+    <thead>
+    <tr>
+        <th>Prénom</th>
+        <th>Nom</th>
+        <th>Date de naissance</th>
+        <th>Genre</th>
+        <th>Adresse</th>
+        <th>Téléphone</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="patient : ${patients}">
+        <td th:text="${patient.firstName}">Prénom</td>
+        <td th:text="${patient.lastName}">Nom</td>
+        <td th:text="${#temporals.format(patient.birthDate, 'dd/MM/yyyy')}">01/01/2000</td>
+        <td th:text="${patient.gender}">F</td>
+        <td th:text="${patient.address}">Adresse</td>
+        <td th:text="${patient.phone}">Téléphone</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -168,3 +168,10 @@ cd front
 ```
 
 Le front est accessible sur http://localhost:8084. Depuis IntelliJ, régler le *Working directory* sur `$MODULE_WORKING_DIR$`.
+
+### Pages
+
+| URL         | Rôle                                      |
+|-------------|-------------------------------------------|
+| `/`         | Redirige vers la liste des patients       |
+| `/patients` | Liste des patients                        |
