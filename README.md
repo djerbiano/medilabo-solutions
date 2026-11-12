@@ -9,7 +9,7 @@ Application en microservices d'aide à la détection du risque de diabète de ty
 | `patient-service`    | Gestion des informations personnelles        | MySQL           | 8081 | En cours |
 | `notes-service`      | Notes des médecins sur les patients          | MongoDB         | 8082 | À venir  |
 | `assessment-service` | Évaluation du risque de diabète              | Aucune          | 8083 | À venir  |
-| `gateway`            | Point d'entrée unique et sécurité            | Aucune          | 8080 | À venir  |
+| `gateway`            | Point d'entrée unique et sécurité            | Aucune          | 8080 | En cours |
 | `front`              | Interface utilisateur                        | Aucune          | -    | À venir  |
 
 Stack : Java 21, Spring Boot 4.1.2, Maven.
