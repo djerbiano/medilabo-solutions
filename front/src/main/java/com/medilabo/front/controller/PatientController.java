@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Controller
 public class PatientController {
@@ -40,7 +41,13 @@ public class PatientController {
         if (bindingResult.hasErrors()) {
             return "patients/form";
         }
-        patientClient.create(patient);
+        try {
+            patientClient.create(patient);
+        } catch (HttpClientErrorException.Conflict e) {
+            bindingResult.reject("patient.duplicate",
+                    "Ce patient existe déjà (même prénom, nom et date de naissance)");
+            return "patients/form";
+        }
         return "redirect:/patients";
     }
 }

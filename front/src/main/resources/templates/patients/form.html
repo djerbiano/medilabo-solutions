@@ -13,6 +13,7 @@
 <h1>Ajouter un patient</h1>
 
 <form id="patientForm" th:action="@{/patients}" th:object="${patient}" method="post" autocomplete="off">
+    <p class="error" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}">Erreur globale</p>
     <p>
         <label for="firstName">Prénom *</label>
         <input type="text" id="firstName" th:field="*{firstName}">
