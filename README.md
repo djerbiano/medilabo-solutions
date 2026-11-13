@@ -62,8 +62,10 @@ Au démarrage, les tables (`schema.sql`) et les 4 patients de test du sujet (`da
 |--------|----------------------|----------------------------|----------------------------------|
 | `GET`  | `/api/patients`      | Liste des patients         | 200                              |
 | `GET`  | `/api/patients/{id}` | Informations d'un patient  | 200, 400 ou 404                  |
-| `POST` | `/api/patients`      | Ajouter un patient         | 201 ou 400                       |
-| `PUT`  | `/api/patients/{id}` | Modifier un patient        | 200, 400 ou 404                  |
+| `POST` | `/api/patients`      | Ajouter un patient         | 201, 400 ou 409                  |
+| `PUT`  | `/api/patients/{id}` | Modifier un patient        | 200, 400, 404 ou 409             |
+
+Un patient est identifié par son prénom, son nom et sa date de naissance : deux patients ne peuvent pas avoir les trois identiques (contrainte `UNIQUE` en base, réponse 409).
 
 Exemple de corps pour `POST` / `PUT` (`address` et `phone` sont facultatifs, `gender` vaut `F` ou `M`) :
 
@@ -100,6 +102,7 @@ Toutes les erreurs sont renvoyées au format standard `ProblemDetail` (RFC 9457,
 | 400  | Données invalides (détail par champ dans `errors`), genre inconnu, id non numérique, JSON illisible   |
 | 404  | Patient introuvable, URL inexistante                                                                  |
 | 405  | Méthode HTTP non autorisée (par exemple `DELETE`)                                                     |
+| 409  | Patient déjà existant : même prénom, nom et date de naissance (majuscules et accents ignorés)         |
 
 ## Lancer le gateway en local
 

@@ -1,5 +1,6 @@
 package com.medilabo.patient.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,6 +26,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GenderNotFoundException.class)
     public ProblemDetail handleGenderNotFound(GenderNotFoundException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(PatientAlreadyExistsException.class)
+    public ProblemDetail handlePatientAlreadyExists(PatientAlreadyExistsException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrity(DataIntegrityViolationException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "Enregistrement refusé par la base : un patient identique existe déjà");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

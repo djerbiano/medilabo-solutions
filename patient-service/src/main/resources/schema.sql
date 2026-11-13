@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS patient (
     gender_id  INT          NOT NULL,
     address    VARCHAR(255),
     phone      VARCHAR(20),
-    FOREIGN KEY (gender_id) REFERENCES gender (id)
+    FOREIGN KEY (gender_id) REFERENCES gender (id),
+    CONSTRAINT uk_patient_identity UNIQUE (first_name, last_name, birth_date)
 ) DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

@@ -30,4 +30,13 @@ public record PatientDto(
 
         @Size(max = 20, message = "Le téléphone ne doit pas dépasser 20 caractères")
         String phone) {
+
+    public PatientDto {
+        if (firstName != null) {
+            firstName = firstName.trim();
+        }
+        if (lastName != null) {
+            lastName = lastName.trim();
+        }
+    }
 }
