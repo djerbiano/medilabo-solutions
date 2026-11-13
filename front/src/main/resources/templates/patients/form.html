@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un patient - MédiLabo</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>Ajouter un patient</h1>
+
+<form id="patientForm" th:action="@{/patients}" th:object="${patient}" method="post" autocomplete="off">
+    <p>
+        <label for="firstName">Prénom *</label>
+        <input type="text" id="firstName" th:field="*{firstName}">
+        <span class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Erreur</span>
+    </p>
+    <p>
+        <label for="lastName">Nom *</label>
+        <input type="text" id="lastName" th:field="*{lastName}">
+        <span class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Erreur</span>
+    </p>
+    <p>
+        <label for="birthDate">Date de naissance *</label>
+        <input type="date" id="birthDate" th:field="*{birthDate}">
+        <span class="error" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}">Erreur</span>
+    </p>
+    <p>
+        <label for="gender">Genre *</label>
+        <select id="gender" th:field="*{gender}">
+            <option value="">-- Choisir --</option>
+            <option value="F">Femme</option>
+            <option value="M">Homme</option>
+        </select>
+        <span class="error" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}">Erreur</span>
+    </p>
+    <p>
+        <label for="address">Adresse</label>
+        <input type="text" id="address" th:field="*{address}">
+        <span class="error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Erreur</span>
+    </p>
+    <p>
+        <label for="phone">Téléphone</label>
+        <input type="text" id="phone" th:field="*{phone}">
+        <span class="error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Erreur</span>
+    </p>
+    <p>
+        <button type="submit">Enregistrer</button>
+        <a th:href="@{/patients}">Annuler</a>
+    </p>
+</form>
+<script>
+    window.addEventListener("pageshow", function () {
+        document.getElementById("patientForm").reset();
+    });
+</script>
+</body>
+</html>

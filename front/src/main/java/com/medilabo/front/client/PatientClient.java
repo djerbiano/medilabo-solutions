@@ -22,4 +22,12 @@ public class PatientClient {
                 .body(new ParameterizedTypeReference<List<PatientDto>>() {
                 });
     }
+
+    public PatientDto create(PatientDto patientDto) {
+        return restClient.post()
+                .uri("/api/patients")
+                .body(patientDto)
+                .retrieve()
+                .body(PatientDto.class);
+    }
 }

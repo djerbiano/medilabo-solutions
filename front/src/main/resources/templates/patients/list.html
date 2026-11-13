@@ -13,7 +13,7 @@
 </head>
 <body>
 <h1>Liste des patients</h1>
-
+<p><a th:href="@{/patients/new}">Ajouter un patient</a></p>
 <p th:if="${patients.isEmpty()}">Aucun patient enregistré.</p>
 
 <table th:unless="${patients.isEmpty()}">
