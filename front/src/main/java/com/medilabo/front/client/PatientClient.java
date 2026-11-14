@@ -30,4 +30,19 @@ public class PatientClient {
                 .retrieve()
                 .body(PatientDto.class);
     }
+
+    public PatientDto findById(Long id) {
+        return restClient.get()
+                .uri("/api/patients/{id}", id)
+                .retrieve()
+                .body(PatientDto.class);
+    }
+
+    public PatientDto update(Long id, PatientDto patientDto) {
+        return restClient.put()
+                .uri("/api/patients/{id}", id)
+                .body(patientDto)
+                .retrieve()
+                .body(PatientDto.class);
+    }
 }

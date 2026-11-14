@@ -174,7 +174,9 @@ Le front est accessible sur http://localhost:8084. Depuis IntelliJ, régler le *
 
 ### Pages
 
-| URL         | Rôle                                      |
-|-------------|-------------------------------------------|
-| `/`         | Redirige vers la liste des patients       |
-| `/patients` | Liste des patients                        |
+| URL                   | Rôle                                                            |
+|-----------------------|-----------------------------------------------------------------|
+| `/`                   | Redirige vers la liste des patients                             |
+| `/patients`           | Liste des patients (lien « Modifier » sur chaque ligne)         |
+| `/patients/new`       | Formulaire d'ajout d'un patient                                 |
+| `/patients/{id}/edit` | Formulaire de modification d'un patient (404 s'il n'existe pas) |

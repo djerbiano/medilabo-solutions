@@ -25,6 +25,7 @@
         <th>Genre</th>
         <th>Adresse</th>
         <th>Téléphone</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -35,8 +36,18 @@
         <td th:text="${patient.gender}">F</td>
         <td th:text="${patient.address}">Adresse</td>
         <td th:text="${patient.phone}">Téléphone</td>
+        <td><a th:href="@{/patients/{id}/edit(id=${patient.id})}">Modifier</a></td>
     </tr>
     </tbody>
 </table>
+<script>
+    // quand on revient sur la liste avec "Précédent", on la recharge pour voir les derniers changements
+    window.addEventListener("pageshow", function (event) {
+        const navigation = performance.getEntriesByType("navigation")[0];
+        if (event.persisted || navigation.type === "back_forward") {
+            location.reload();
+        }
+    });
+</script>
 </body>
 </html>

@@ -2,7 +2,8 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Ajouter un patient - MédiLabo</title>
+    <title th:text="${patient.id == null} ? 'Ajouter un patient - MédiLabo' : 'Modifier un patient - MédiLabo'">Patient
+        - MédiLabo</title>
     <style>
         .error {
             color: red;
@@ -10,9 +11,12 @@
     </style>
 </head>
 <body>
-<h1>Ajouter un patient</h1>
+<h1 th:text="${patient.id == null} ? 'Ajouter un patient' : 'Modifier un patient'">Patient</h1>
 
-<form id="patientForm" th:action="@{/patients}" th:object="${patient}" method="post" autocomplete="off">
+<form id="patientForm" th:action="${patient.id == null} ? @{/patients} : @{/patients/{id}(id=${patient.id})}"
+      th:data-fresh-url="${patient.id == null} ? @{/patients/new} : @{/patients/{id}/edit(id=${patient.id})}"
+      th:object="${patient}" method="post" autocomplete="off">
+    <input type="hidden" th:field="*{id}">
     <p class="error" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}">Erreur globale</p>
     <p>
         <label for="firstName">Prénom *</label>
@@ -54,8 +58,12 @@
     </p>
 </form>
 <script>
-    window.addEventListener("pageshow", function () {
-        document.getElementById("patientForm").reset();
+    // Quand on revient sur cette page avec "Précédent", le navigateur affiche une vieille copie. on redemande le formulaire au serveur pour avoir les bonnes infos.
+    window.addEventListener("pageshow", function (event) {
+        const navigation = performance.getEntriesByType("navigation")[0];
+        if (event.persisted || navigation.type === "back_forward") {
+            location.replace(document.getElementById("patientForm").dataset.freshUrl);
+        }
     });
 </script>
 </body>
