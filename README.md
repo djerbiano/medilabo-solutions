@@ -180,3 +180,9 @@ Le front est accessible sur http://localhost:8084. Depuis IntelliJ, régler le *
 | `/patients`           | Liste des patients (lien « Modifier » sur chaque ligne)         |
 | `/patients/new`       | Formulaire d'ajout d'un patient                                 |
 | `/patients/{id}/edit` | Formulaire de modification d'un patient (404 s'il n'existe pas) |
+
+### Pannes et temps d'attente
+
+Le front n'attend pas indéfiniment le gateway : 2 s maximum pour se connecter, 5 s maximum pour recevoir la réponse (`gateway.connect-timeout` et `gateway.read-timeout` dans `application.properties`).
+
+Si le gateway est arrêté, trop lent ou renvoie une erreur 5xx (par exemple parce que `patient-service` est arrêté), le front affiche la page « Service momentanément indisponible » (code **503**) au lieu d'une erreur 500.
