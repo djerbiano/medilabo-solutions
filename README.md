@@ -144,6 +144,10 @@ Toutes les requêtes doivent être authentifiées en HTTP Basic, sinon le gatewa
 curl -u medecin:votre_mot_de_passe http://localhost:8080/api/patients
 ```
 
+### Temps d'attente
+
+Le gateway n'attend pas indéfiniment les services : 2 s maximum pour se connecter, 5 s maximum pour recevoir la réponse (`connect-timeout` et `response-timeout` dans `application.properties`). Au-delà, il répond **504 Gateway Timeout**.
+
 ## Lancer le front en local
 
 Le front affiche les pages HTML (Thymeleaf) et appelle uniquement le gateway.
@@ -183,6 +187,6 @@ Le front est accessible sur http://localhost:8084. Depuis IntelliJ, régler le *
 
 ### Pannes et temps d'attente
 
-Le front n'attend pas indéfiniment le gateway : 2 s maximum pour se connecter, 5 s maximum pour recevoir la réponse (`gateway.connect-timeout` et `gateway.read-timeout` dans `application.properties`).
+Le front n'attend pas indéfiniment le gateway : 2 s maximum pour se connecter, 10 s maximum pour recevoir la réponse (`gateway.connect-timeout` et `gateway.read-timeout` dans `application.properties`).
 
 Si le gateway est arrêté, trop lent ou renvoie une erreur 5xx (par exemple parce que `patient-service` est arrêté), le front affiche la page « Service momentanément indisponible » (code **503**) au lieu d'une erreur 500.
