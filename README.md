@@ -7,7 +7,7 @@ Application en microservices d'aide à la détection du risque de diabète de ty
 | Service              | Rôle                                         | Base de données | Port | État     |
 |----------------------|----------------------------------------------|-----------------|------|----------|
 | `patient-service`    | Gestion des informations personnelles        | MySQL           | 8081 | En cours |
-| `notes-service`      | Notes des médecins sur les patients          | MongoDB         | 8082 | À venir  |
+| `notes-service`      | Notes des médecins sur les patients          | MongoDB         | 8082 | En cours |
 | `assessment-service` | Évaluation du risque de diabète              | Aucune          | 8083 | À venir  |
 | `gateway`            | Point d'entrée unique et sécurité            | Aucune          | 8080 | En cours |
 | `front`              | Interface utilisateur                        | Aucune          | 8084 | En cours |
@@ -103,6 +103,32 @@ Toutes les erreurs sont renvoyées au format standard `ProblemDetail` (RFC 9457,
 | 404  | Patient introuvable, URL inexistante                                                                  |
 | 405  | Méthode HTTP non autorisée (par exemple `DELETE`)                                                     |
 | 409  | Patient déjà existant : même prénom, nom et date de naissance (majuscules et accents ignorés)         |
+
+## Lancer le notes-service en local
+
+### Prérequis
+
+- Java 21
+- MongoDB (service démarré sur le port 27017)
+
+### 1. Configurer les variables d'environnement
+
+Copier `notes-service/.env.example` en `notes-service/.env`.
+
+| Variable      | Rôle                       | Exemple                                    |
+|---------------|----------------------------|--------------------------------------------|
+| `MONGODB_URI` | Adresse de la base MongoDB | `mongodb://localhost:27017/medilabo_notes` |
+
+La base `medilabo_notes` n'a pas besoin d'être créée à la main : MongoDB la crée automatiquement à l'enregistrement de la première note.
+
+### 2. Démarrer
+
+```bash
+cd notes-service
+./mvnw spring-boot:run
+```
+
+Le service écoute sur le port **8082**. Depuis IntelliJ, régler le *Working directory* sur `$MODULE_WORKING_DIR$`.
 
 ## Lancer le gateway en local
 
