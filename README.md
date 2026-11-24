@@ -116,14 +116,16 @@ Toutes les erreurs sont renvoyées au format standard `ProblemDetail` (RFC 9457,
 
 - Java 21
 - MongoDB (service démarré sur le port 27017)
+- `patient-service` démarré : avant de lire ou d'ajouter une note, le notes-service lui demande si le patient existe
 
 ### 1. Configurer les variables d'environnement
 
 Copier `notes-service/.env.example` en `notes-service/.env`.
 
-| Variable      | Rôle                       | Exemple                                    |
-|---------------|----------------------------|--------------------------------------------|
-| `MONGODB_URI` | Adresse de la base MongoDB | `mongodb://localhost:27017/medilabo_notes` |
+| Variable              | Rôle                         | Valeur par défaut                                    |
+|-----------------------|------------------------------|------------------------------------------------------|
+| `MONGODB_URI`         | Adresse de la base MongoDB   | Aucune (exemple : `mongodb://localhost:27017/medilabo_notes`) |
+| `PATIENT_SERVICE_URL` | Adresse du `patient-service` | `http://localhost:8081`                              |
 
 La base `medilabo_notes` n'a pas besoin d'être créée à la main : elle est créée au premier démarrage du service, avec la
 collection `notes` et son index sur `patId`.
