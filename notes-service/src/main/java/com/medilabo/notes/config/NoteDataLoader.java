@@ -2,6 +2,7 @@ package com.medilabo.notes.config;
 
 import com.medilabo.notes.model.Note;
 import com.medilabo.notes.repository.NoteRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -10,13 +11,10 @@ import java.util.List;
 
 // si la collection est vide, charge les notes de test au démarrage
 @Component
+@RequiredArgsConstructor
 public class NoteDataLoader implements CommandLineRunner {
 
     private final NoteRepository noteRepository;
-
-    public NoteDataLoader(NoteRepository noteRepository) {
-        this.noteRepository = noteRepository;
-    }
 
     @Override
     public void run(String... args) {
