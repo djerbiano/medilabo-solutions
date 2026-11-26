@@ -177,7 +177,7 @@ chaque requête au bon microservice.
 ### Prérequis
 
 - Java 21
-- `patient-service` démarré (voir ci-dessus)
+- `patient-service` et `notes-service` démarrés (voir ci-dessus)
 
 ### 1. Configurer les variables d'environnement
 
@@ -189,6 +189,7 @@ autorisé.
 | `GATEWAY_USERNAME`    | Identifiant de l'utilisateur  | Aucune (obligatoire)    |
 | `GATEWAY_PASSWORD`    | Mot de passe de l'utilisateur | Aucune (obligatoire)    |
 | `PATIENT_SERVICE_URL` | Adresse du `patient-service`  | `http://localhost:8081` |
+| `NOTES_SERVICE_URL`   | Adresse du `notes-service`    | `http://localhost:8082` |
 
 ### 2. Démarrer
 
@@ -204,17 +205,28 @@ Depuis IntelliJ, régler le *Working directory* sur `$MODULE_WORKING_DIR$`, comm
 | Chemin             | Service cible     |
 |--------------------|-------------------|
 | `/api/patients/**` | `patient-service` |
+| `/api/notes/**`    | `notes-service`   |
 
 Toutes les requêtes doivent être authentifiées en HTTP Basic, sinon le gateway répond **401** :
 
 ```bash
 curl -u medecin:votre_mot_de_passe http://localhost:8080/api/patients
+curl -u medecin:votre_mot_de_passe http://localhost:8080/api/notes/patient/1
 ```
 
 ### Temps d'attente
 
 Le gateway n'attend pas indéfiniment les services : 2 s maximum pour se connecter, 5 s maximum pour recevoir la réponse
 (`connect-timeout` et `response-timeout` dans `application.properties`). Au-delà, il répond **504 Gateway Timeout**.
+
+La route `/api/notes/**` attend jusqu'à 8 s pour la réponse : le `notes-service` appelle lui-même le `patient-service`
+(jusqu'à 2 s pour se connecter + 5 s pour la réponse, soit 7 s au pire). Si celui-ci est trop lent, le client reçoit
+ainsi le **503** clair du `notes-service` au lieu d'un 504.
+
+| Délai de la route | Réponse reçue par le client quand `patient-service` est trop lent                                     |
+|-------------------|--------------------------------------------------------------------------------------------------------|
+| 5 s (par défaut)  | **504** du gateway : `"error":"Gateway Timeout"`, sans dire quel service est en cause                  |
+| 8 s               | **503** du `notes-service` : `"detail":"Service patient indisponible, réessayez plus tard"` |
 
 ## Lancer le front en local
 
