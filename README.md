@@ -142,6 +142,33 @@ cd notes-service
 
 Le service écoute sur le port **8082**. Depuis IntelliJ, régler le *Working directory* sur `$MODULE_WORKING_DIR$`.
 
+### API
+
+| Verbe  | URL                          | Rôle                                                  | Réponse              |
+|--------|------------------------------|-------------------------------------------------------|----------------------|
+| `GET`  | `/api/notes/patient/{patId}` | Notes d'un patient, de la plus récente à la plus ancienne | 200, 400, 404 ou 503 |
+| `POST` | `/api/notes`                 | Ajouter une note                                      | 201, 400, 404 ou 503 |
+
+Exemple de corps pour `POST` (la date de la note est ajoutée par le service) :
+
+```json
+{
+  "patId": 1,
+  "content": "Le patient déclare qu'il 'se sent très bien'"
+}
+```
+
+### Erreurs
+
+Même format `ProblemDetail` que le `patient-service`.
+
+| Code | Cas                                                                                                   |
+|------|-------------------------------------------------------------------------------------------------------|
+| 400  | Données invalides (détail par champ dans `errors`), `patId` non numérique, JSON illisible             |
+| 404  | Patient introuvable dans le `patient-service`, URL inexistante                                        |
+| 405  | Méthode HTTP non autorisée (par exemple `DELETE`)                                                     |
+| 503  | `patient-service` arrêté ou trop lent (plus de 2 s pour se connecter ou 5 s pour répondre) |
+
 ## Lancer le gateway en local
 
 Le gateway est le point d'entrée unique de l'application (port **8080**) : il vérifie l'authentification puis transmet
