@@ -214,10 +214,28 @@ curl -u medecin:votre_mot_de_passe http://localhost:8080/api/patients
 curl -u medecin:votre_mot_de_passe http://localhost:8080/api/notes/patient/1
 ```
 
-### Temps d'attente
+### Temps d'attente et services indisponibles
 
 Le gateway n'attend pas indéfiniment les services : 2 s maximum pour se connecter, 5 s maximum pour recevoir la réponse
-(`connect-timeout` et `response-timeout` dans `application.properties`). Au-delà, il répond **504 Gateway Timeout**.
+(`connect-timeout` et `response-timeout` dans `application.properties`).
+
+| Situation                                                     | Réponse du gateway                                          |
+|---------------------------------------------------------------|-------------------------------------------------------------|
+| Service arrêté (connexion refusée)                            | **503 Service Unavailable** immédiat                        |
+| Service injoignable (connexion impossible en 2 s)             | **503 Service Unavailable** après 2 s                       |
+| Service joint mais trop lent (pas de réponse dans le délai)   | **504 Gateway Timeout**                                     |
+
+Exemple de réponse 503 (même format que les autres erreurs du gateway) :
+
+```json
+{
+  "timestamp": "2026-11-28T17:53:19.194Z",
+  "path": "/api/notes/patient/1",
+  "status": 503,
+  "error": "Service Unavailable",
+  "requestId": "9096d943-2"
+}
+```
 
 La route `/api/notes/**` attend jusqu'à 8 s pour la réponse : le `notes-service` appelle lui-même le `patient-service`
 (jusqu'à 2 s pour se connecter + 5 s pour la réponse, soit 7 s au pire). Si celui-ci est trop lent, le client reçoit
