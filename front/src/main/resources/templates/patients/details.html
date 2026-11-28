@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="|${patient.firstName} ${patient.lastName} - MédiLabo|">Patient - MédiLabo</title>
+    <style>
+        .note-content {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+<p><a th:href="@{/patients}">Retour à la liste des patients</a></p>
+
+<h1 th:text="|${patient.firstName} ${patient.lastName}|">Prénom Nom</h1>
+
+<section>
+    <h2>Informations</h2>
+    <dl>
+        <dt>Date de naissance</dt>
+        <dd th:text="${#temporals.format(patient.birthDate, 'dd/MM/yyyy')}">01/01/2000</dd>
+        <dt>Genre</dt>
+        <dd th:text="${patient.gender}">F</dd>
+        <dt>Adresse</dt>
+        <dd th:text="${patient.address}">Adresse</dd>
+        <dt>Téléphone</dt>
+        <dd th:text="${patient.phone}">Téléphone</dd>
+    </dl>
+    <p><a th:href="@{/patients/{id}/edit(id=${patient.id})}">Modifier le patient</a></p>
+</section>
+
+<section>
+    <h2>Notes du médecin</h2>
+    <p th:if="${notesUnavailable}" class="notes-unavailable" role="alert">
+        Les notes sont momentanément indisponibles. Réessayez dans quelques instants.
+    </p>
+    <th:block th:unless="${notesUnavailable}">
+        <p th:if="${notes.isEmpty()}">Aucune note pour ce patient.</p>
+        <article th:each="note : ${notes}">
+            <h3>
+                <time th:datetime="${note.createdAt}"
+                      th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy à HH:mm')}">01/01/2026 à 10:00</time>
+            </h3>
+            <p class="note-content" th:text="${note.content}">Contenu de la note</p>
+        </article>
+    </th:block>
+</section>
+
+<script>
+    // quand on revient sur la fiche avec "Précédent", on la recharge pour voir les derniers changements
+    window.addEventListener("pageshow", function (event) {
+        const navigation = performance.getEntriesByType("navigation")[0];
+        if (event.persisted || navigation.type === "back_forward") {
+            location.reload();
+        }
+    });
+</script>
+</body>
+</html>

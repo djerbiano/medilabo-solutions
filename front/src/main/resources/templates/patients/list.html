@@ -36,7 +36,10 @@
         <td th:text="${patient.gender}">F</td>
         <td th:text="${patient.address}">Adresse</td>
         <td th:text="${patient.phone}">Téléphone</td>
-        <td><a th:href="@{/patients/{id}/edit(id=${patient.id})}">Modifier</a></td>
+        <td>
+            <a th:href="@{/patients/{id}(id=${patient.id})}">Voir</a>
+            <a th:href="@{/patients/{id}/edit(id=${patient.id})}">Modifier</a>
+        </td>
     </tr>
     </tbody>
 </table>
