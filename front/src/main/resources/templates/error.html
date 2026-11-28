@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erreur - MédiLabo</title>
+</head>
+<body>
+<h1>Une erreur est survenue</h1>
+<p th:text="|La demande n'a pas pu aboutir (code ${status}).|">La demande n'a pas pu aboutir.</p>
+<p><a th:href="@{/patients}">Retour à la liste des patients</a></p>
+</body>
+</html>
