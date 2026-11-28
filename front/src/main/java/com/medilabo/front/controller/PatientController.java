@@ -2,6 +2,7 @@ package com.medilabo.front.controller;
 
 import com.medilabo.front.client.NoteClient;
 import com.medilabo.front.client.PatientClient;
+import com.medilabo.front.dto.NoteDto;
 import com.medilabo.front.dto.PatientDto;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -65,6 +66,37 @@ public class PatientController {
 
     @GetMapping("/patients/{id}")
     public String showDetails(@PathVariable Long id, Model model) {
+        loadDetails(id, model);
+        model.addAttribute("newNote", new NoteDto(null, null, null, null));
+        return "patients/details";
+    }
+
+    @PostMapping("/patients/{id}/notes")
+    public String addNote(@PathVariable Long id,
+                          @Valid @ModelAttribute("newNote") NoteDto newNote,
+                          BindingResult bindingResult,
+                          Model model) {
+        if (bindingResult.hasErrors()) {
+            loadDetails(id, model);
+            return "patients/details";
+        }
+        try {
+            // le patient vient de l'URL, pas du formulaire : on ne garde que le contenu saisi
+            noteClient.create(new NoteDto(null, id, newNote.content(), null));
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        } catch (HttpServerErrorException | ResourceAccessException e) {
+            log.warn("Note non enregistrée pour le patient {} : {}", id, e.getMessage());
+            bindingResult.reject("note.unavailable",
+                    "Le service des notes ne répond pas : la note n'a pas été enregistrée. Réessayez plus tard.");
+            loadDetails(id, model);
+            return "patients/details";
+        }
+        return "redirect:/patients/{id}";
+    }
+
+    // charge le patient (obligatoire) et ses notes (facultatives) pour la fiche
+    private void loadDetails(Long id, Model model) {
         try {
             model.addAttribute("patient", patientClient.findById(id));
         } catch (HttpClientErrorException.NotFound e) {
@@ -77,7 +109,6 @@ public class PatientController {
             log.warn("Notes indisponibles pour le patient {} : {}", id, e.getMessage());
             model.addAttribute("notesUnavailable", true);
         }
-        return "patients/details";
     }
 
     @GetMapping("/patients/{id}/edit")

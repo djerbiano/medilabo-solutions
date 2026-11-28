@@ -7,9 +7,13 @@
         .note-content {
             white-space: pre-line;
         }
+
+        .error {
+            color: red;
+        }
     </style>
 </head>
-<body>
+<body th:data-fresh-url="@{/patients/{id}(id=${patient.id})}">
 <p><a th:href="@{/patients}">Retour à la liste des patients</a></p>
 
 <h1 th:text="|${patient.firstName} ${patient.lastName}|">Prénom Nom</h1>
@@ -31,6 +35,19 @@
 
 <section>
     <h2>Notes du médecin</h2>
+
+    <form th:action="@{/patients/{id}/notes(id=${patient.id})}" th:object="${newNote}" method="post">
+        <p class="error" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}" role="alert">Erreur globale</p>
+        <p>
+            <label for="content">Nouvelle note *</label><br>
+            <textarea id="content" th:field="*{content}" rows="5" cols="60"></textarea>
+            <span class="error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">Erreur</span>
+        </p>
+        <p>
+            <button type="submit">Ajouter la note</button>
+        </p>
+    </form>
+
     <p th:if="${notesUnavailable}" class="notes-unavailable" role="alert">
         Les notes sont momentanément indisponibles. Réessayez dans quelques instants.
     </p>
@@ -47,11 +64,13 @@
 </section>
 
 <script>
-    // quand on revient sur la fiche avec "Précédent", on la recharge pour voir les derniers changements
+    // quand on revient sur la fiche avec "Précédent", on redemande la fiche au serveur pour voir les derniers changements.
+    // on passe par l'adresse de la fiche et pas par reload() : après une erreur d'ajout, la page vient d'un POST
+    // et reload() proposerait de renvoyer la note.
     window.addEventListener("pageshow", function (event) {
         const navigation = performance.getEntriesByType("navigation")[0];
         if (event.persisted || navigation.type === "back_forward") {
-            location.reload();
+            location.replace(document.body.dataset.freshUrl);
         }
     });
 </script>
