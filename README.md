@@ -253,7 +253,8 @@ Le front affiche les pages HTML (Thymeleaf) et appelle uniquement le gateway.
 ### Prérequis
 
 - Java 21
-- `patient-service` et `gateway` démarrés (voir ci-dessus)
+- `patient-service`, `notes-service` et `gateway` démarrés (voir ci-dessus). Sans `notes-service`, la fiche patient
+  s'affiche quand même, sans les notes.
 
 ### 1. Configurer les variables d'environnement
 
@@ -277,17 +278,40 @@ Le front est accessible sur http://localhost:8084. Depuis IntelliJ, régler le *
 
 ### Pages
 
-| URL                   | Rôle                                                            |
-|-----------------------|-----------------------------------------------------------------|
-| `/`                   | Redirige vers la liste des patients                             |
-| `/patients`           | Liste des patients (lien « Modifier » sur chaque ligne)         |
-| `/patients/new`       | Formulaire d'ajout d'un patient                                 |
-| `/patients/{id}/edit` | Formulaire de modification d'un patient (404 s'il n'existe pas) |
+| Verbe  | URL                     | Rôle                                                                          |
+|--------|-------------------------|-------------------------------------------------------------------------------|
+| `GET`  | `/`                     | Redirige vers la liste des patients                                           |
+| `GET`  | `/patients`             | Liste des patients (liens « Voir » et « Modifier » sur chaque ligne)          |
+| `GET`  | `/patients/new`         | Formulaire d'ajout d'un patient                                               |
+| `GET`  | `/patients/{id}`        | Fiche patient : informations, notes du médecin (les plus récentes en premier) et formulaire d'ajout d'une note |
+| `POST` | `/patients/{id}/notes`  | Ajoute une note au patient, puis revient sur sa fiche                         |
+| `GET`  | `/patients/{id}/edit`   | Formulaire de modification d'un patient                                       |
+
+Le patient de la note est pris dans l'URL, jamais dans le formulaire. Le contenu de la note est obligatoire.
+
+La taille des notes n'est pas limitée par l'application (exigence du sujet). Seule reste la limite par défaut de Tomcat :
+2 Mo par formulaire (environ 1000 pages de texte).
+
+### Pages d'erreur
+
+| Cas                                                                   | Page affichée                                        |
+|-----------------------------------------------------------------------|------------------------------------------------------|
+| Patient inexistant ou identifiant non numérique (`/patients/abc`)     | « Page introuvable » (**404**)                       |
+| Formulaire de plus de 2 Mo                                            | « Contenu trop volumineux » (**413**)                |
+| `patient-service` ou `gateway` indisponible                           | « Service momentanément indisponible » (**503**)     |
+| Toute autre erreur (méthode non autorisée, erreur interne…)           | « Une erreur est survenue », avec le code            |
+
+Les pages d'erreur n'affichent jamais de détail technique (message d'exception, pile d'appels).
 
 ### Pannes et temps d'attente
 
 Le front n'attend pas indéfiniment le gateway : 2 s maximum pour se connecter, 10 s maximum pour recevoir la réponse
 (`gateway.connect-timeout` et `gateway.read-timeout` dans `application.properties`).
 
-Si le gateway est arrêté, trop lent ou renvoie une erreur 5xx (par exemple parce que `patient-service` est arrêté), le
-front affiche la page « Service momentanément indisponible » (code **503**) au lieu d'une erreur 500.
+Le patient est indispensable, les notes non :
+
+| Panne                                            | Ce que voit l'utilisateur                                                                 |
+|--------------------------------------------------|-------------------------------------------------------------------------------------------|
+| `gateway` ou `patient-service` indisponible      | La page « Service momentanément indisponible » (**503**)                                  |
+| `notes-service` indisponible, sur la fiche       | La fiche avec les informations du patient et le message « Les notes sont momentanément indisponibles » |
+| `notes-service` indisponible, à l'ajout d'une note | La fiche avec le message « Le service des notes ne répond pas : la note n'a pas été enregistrée », le texte saisi est conservé |
